@@ -2,7 +2,7 @@ services:
   odysseus:
     build: .
     ports:
-      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-7000}:7000"
+      - "${APP_BIND:-0.0.0.0}:${APP_PORT:-7000}:7000"
     volumes:
       - ./data:/app/data:z
       - ./logs:/app/logs:z
@@ -28,7 +28,7 @@ services:
       - RESEARCH_LLM_ENDPOINT=${RESEARCH_LLM_ENDPOINT:-}
       - HF_TOKEN=${HF_TOKEN:-}
       - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN:-}
-      - SEARXNG_INSTANCE=http://searxng:8080
+      - SEARXNG_INSTANCE=http://searxng:18080
       - CHROMADB_HOST=chromadb
       - CHROMADB_PORT=8000
       - DATABASE_URL=${DATABASE_URL:-sqlite:///./data/app.db}
@@ -99,7 +99,7 @@ services:
         fi
         exec /usr/local/searxng/entrypoint.sh
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:18080:8080"
     volumes:
       - searxng-data:/etc/searxng
       - ./config/searxng/settings.yml:/tmp/searxng-settings.yml.template:ro,z
@@ -121,7 +121,7 @@ services:
       - SETUID
       - DAC_OVERRIDE
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8080/', timeout=5).read(1)\""]
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:18080/', timeout=5).read(1)\""]
       interval: 5s
       timeout: 6s
       retries: 20
